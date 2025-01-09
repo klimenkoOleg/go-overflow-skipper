@@ -1,4 +1,4 @@
-package main
+package skippingratelimiter
 
 import (
 	"context"
@@ -67,36 +67,4 @@ func (t *Throttle[T]) messageProcessor(
 			t.messageHandler(msg)
 		}
 	}
-}
-
-type Message struct {
-	ID      string
-	Message string
-}
-
-func main() {
-	ctx := context.Background()
-	throttler := NewThrottle[Message](10, time.Second)
-
-	throttler.messageHandler = func(msg Message) {
-		fmt.Printf("got in handler: %+v\n", msg)
-		time.Sleep(time.Millisecond * 500)
-	}
-	throttler.skipMessageCallback = func(skippedMsgCount uint64) {
-		fmt.Printf("skippedMsgCount: %d\n", skippedMsgCount)
-	}
-
-	throttler.messageProducer = func(ctx context.Context) (Message, error) {
-		time.Sleep(time.Millisecond * 200)
-		return Message{
-			ID:      "1",
-			Message: "hello world",
-		}, nil
-	}
-
-	err := throttler.Run(ctx)
-	if err != nil {
-		fmt.Println("err", err)
-	}
-
 }
