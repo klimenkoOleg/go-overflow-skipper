@@ -3,6 +3,7 @@ package skippingratelimiter
 import (
 	"context"
 	"fmt"
+	"log"
 	"testing"
 	"time"
 )
@@ -35,6 +36,6 @@ func TestNewThrottle(t *testing.T) {
 
 	err := throttler.Run(ctx)
 	if err != nil {
-		fmt.Println("err", err)
+		log.Fatalln(err)
 	}
 }
